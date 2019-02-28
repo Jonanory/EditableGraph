@@ -4,17 +4,25 @@ using UnityEngine;
 
 namespace EditableGraph
 {
-    public class Node : MonoBehaviour {
+    public class Node : MonoBehaviour
+    {
 
         public List<Node> connectedNodes = new List<Node>();
 
-        public static float personalSpaceRadius = 0.7f;
+        static float personalSpaceRadius = 0.7f;
+
+        // Change the speed that the nodes moves under different influences
+        static float speedTowardsConnectedNodes = 4f;
+        static float speedAwayFromDisconnectedNodes = 1f;
+        static float speedToCenter = 4f;
+
         public bool isDragging = false;
         public bool isHovering = false;
 
         Vector3 amountToMove;
 
-        void Start () {
+        void Start()
+        {
             Graph.allNodes.Add(this);
         }
 
@@ -23,12 +31,13 @@ namespace EditableGraph
             Graph.allNodes.Remove(this);
         }
 
-        void Update () {
+        void Update()
+        {
 
             // Dragging node with mouse
-            if(Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0))
             {
-                if(isHovering)
+                if (isHovering)
                 {
                     isDragging = true;
                 }
@@ -40,13 +49,13 @@ namespace EditableGraph
                     isDragging = false;
                 }
             }
-            if (isDragging)  Drag();
+            if (isDragging) Drag();
 
 
             // Create new line between nodes
-            if(Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(1))
             {
-                if(isHovering)
+                if (isHovering)
                 {
                     CreateLine();
                 }
@@ -82,9 +91,9 @@ namespace EditableGraph
             Vector2 normalToCenter = Vector3.Normalize(movementToCenter);
             float distanceToCenter = movementToCenter.magnitude;
 
-            if(distanceToCenter > 0.8f * Graph.master.radius )
+            if (distanceToCenter > 0.8f * Graph.master.radius)
             {
-                amountToMove = normalToCenter * (distanceToCenter - Graph.master.radius * 0.8f);
+                amountToMove = speedToCenter * normalToCenter * (distanceToCenter - Graph.master.radius * 0.8f);
             }
 
             // Move Closer to connected nodes, and further away from unconnected nodes
@@ -98,12 +107,12 @@ namespace EditableGraph
 
                     if (connectedNodes.Contains(_node))
                     {
-                        float change = distance - 2 * personalSpaceRadius;
+                        float change = speedTowardsConnectedNodes * (distance - 2 * personalSpaceRadius);
                         amountToMove += normal * change;
                     }
                     else if (distance < 3f)
                     {
-                        float change = -Mathf.Pow(2, -distance);
+                        float change = -speedAwayFromDisconnectedNodes * Mathf.Pow(2, -distance);
                         amountToMove += normal * change;
                     }
                 }
@@ -117,7 +126,7 @@ namespace EditableGraph
         }
 
         // Move under influence of other nodes
-        public void Move( )
+        public void Move()
         {
             if (isDragging) return;
             amountToMove *= Time.deltaTime;

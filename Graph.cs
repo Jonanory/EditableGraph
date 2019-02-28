@@ -16,7 +16,7 @@ namespace EditableGraph
 
         public GameObject LinePrefab;
 
-        // If nodes are outside the radius, they will move towards the center 
+        // If nodes are outside the radius, they will move towards the center
         public float radius = 5;
 
         bool drawingLine = false;
@@ -79,7 +79,7 @@ namespace EditableGraph
             }
         }
 
-    // Determine if two lines, with given endpoints, cross each other
+        // Determine if two lines, with given endpoints, cross each other
         public bool LineCrosses(Vector2 aStart, Vector2 aEnd, Vector2 bStart, Vector2 bEnd)
         {
             Vector2 aNorm = Vector2.Perpendicular(aEnd - aStart);
